@@ -7,16 +7,40 @@
 // Name             Date            Description
 //
 //===================================================
-import store from "./redux/store";
+import store from "redux/store";
 import { Provider } from "react-redux";
-import EntryRoute from "./navigations/EntryRoute";
-import CustomAlert from "./components/shared/commons/CustomAlert";
+import EntryRoute from "navigations/EntryRoute";
+import CustomAlert from "components/shared/commons/CustomAlert";
 import { createTheme, ThemeProvider } from "@mui/material";
+import * as Color from "constants/colors";
 
 const App = () => {
   const theme = createTheme({
     typography: {
       fontFamily: ["Nunito", "sans-serif"].join(","),
+    },
+    palette: {
+      primary: {
+        main: Color.primary,
+      },
+      secondary: {
+        main: Color.secondary,
+      },
+      success: {
+        main: Color.success,
+      },
+      error: {
+        main: Color.error,
+      },
+      warning: {
+        main: Color.warning,
+      },
+      info: {
+        main: Color.info,
+      },
+      accent1: {
+        main: Color.accent1,
+      },
     },
   });
 
