@@ -18,8 +18,8 @@ import {
   Typography,
   Paper,
   Container,
-  colors,
 } from "@mui/material";
+import { login } from "services/auth-services";
 import { showAlert } from "redux/actions/alert";
 import { loginSuccess } from "redux/actions/auth";
 import Spacer from "components/shared/commons/Spacer";
@@ -37,17 +37,22 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (formData) => {
-    if (formData.username !== "" && formData.password === "1234") {
-      let account = {
-        username: formData.username.toUpperCase(),
+  const onSubmit = async (credential) => {
+    const result = await login(credential);
+    if (result.success) {
+      let payload = {
+        user: result.data.data,
+        token: result.data.token,
       };
 
-      dispatch(loginSuccess(account));
-      dispatch(showAlert("success", "Login success!"));
-      history.push("/dashboard");
+      localStorage.setItem("token_secret", result.data.token);
+      dispatch(loginSuccess(payload));
+      dispatch(showAlert("success", "Login berhasil!"));
+      history.push("/");
     } else {
-      dispatch(showAlert("error", "Credential invalid!"));
+      dispatch(
+        showAlert("error", "Email atau password yang dimasukkan salah!")
+      );
     }
   };
 
@@ -85,21 +90,21 @@ const Login = () => {
           </Box>
           <Box width="100%" display="flex" flexDirection="column">
             <Controller
-              name={"username"}
+              name={"email"}
               control={control}
               render={({ field: { onChange, value } }) => (
                 <TextField
                   onChange={onChange}
                   defaultValue={value}
-                  label={"Username"}
+                  label={"Email"}
                   variant="standard"
-                  inputProps={{ style: { textTransform: "uppercase" } }}
+                  // inputProps={{ style: { textTransform: "uppercase" } }}
                 />
               )}
-              rules={{ required: "Username harus diisi!" }}
+              rules={{ required: "Email harus diisi!" }}
             />
-            {errors.username && (
-              <ErrorMessage>{errors.username.message}</ErrorMessage>
+            {errors.email && (
+              <ErrorMessage>{errors.email.message}</ErrorMessage>
             )}
             <Box sx={{ marginBottom: 2 }} />
             <Controller
