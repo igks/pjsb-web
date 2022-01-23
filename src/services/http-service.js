@@ -8,17 +8,22 @@
 //
 //===================================================
 import axios from "axios";
-import { errorHandler } from "../helpers/error-handler";
+import { errorHandler } from "helpers/error-handler";
+import store from "redux/store";
 
 const { REACT_APP_SERVER_DOMAIN } = process.env;
 
 const axiosInstance = axios.create({
   baseURL: REACT_APP_SERVER_DOMAIN,
-  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
   // withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
+  config.headers.Authorization = `Bearer ${store.getState().auth.token}`;
   return config;
 });
 

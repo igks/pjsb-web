@@ -10,9 +10,8 @@
 import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../actions/types";
 
 const initialState = {
-  account: {
-    username: "",
-  },
+  user: null,
+  token: "",
   isAuthenticated: false,
 };
 
@@ -23,7 +22,8 @@ export default function auth(state = initialState, action) {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        account: payload,
+        user: payload.user,
+        token: payload.token,
         isAuthenticated: true,
       };
 
