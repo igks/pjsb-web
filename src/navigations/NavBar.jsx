@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, Divider, IconButton } from "@mui/material";
 import { Logout } from "@mui/icons-material";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "redux/actions/alert";
 import { logout } from "services/auth-services";
 import { logoutSuccess } from "redux/actions/auth";
@@ -10,6 +10,7 @@ import { logoutSuccess } from "redux/actions/auth";
 const NavBar = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
 
   const onLogout = async () => {
     const result = await logout();
@@ -31,9 +32,9 @@ const NavBar = () => {
           sx={{ height: 60 }}
           px={5}
         >
-          <Typography>Admin</Typography>
+          <Typography>{authState?.user?.name ?? ""}</Typography>
           <IconButton onClick={onLogout}>
-            <Logout color="warning" />
+            <Logout color="warning" sx={{ fontSize: 20 }} />
           </IconButton>
         </Box>
         <Divider />
