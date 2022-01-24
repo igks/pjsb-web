@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   Box,
   Divider,
@@ -9,13 +10,20 @@ import {
   ListItemText,
 } from "@mui/material";
 import Logo from "assets/images/logo.png";
-import { Dashboard } from "@mui/icons-material";
+import { Dashboard, Person } from "@mui/icons-material";
 
 const SideBar = () => {
-  const [selectedMenu, setSelectedMenu] = useState(null);
+  const history = useHistory();
+  const [selectedMenu, setSelectedMenu] = useState(0);
 
-  const handleMenuClick = (event, value) => {
+  // const authorizedRole = {
+  //   dashboard: [0, 1],
+  //   user: [1, 2],
+  // };
+
+  const handleMenuClick = (event, value, target) => {
     setSelectedMenu(value);
+    history.push(`/${target}`);
   };
 
   return (
@@ -37,12 +45,24 @@ const SideBar = () => {
           <List component="nav" aria-label="main mailbox folders">
             <ListItemButton
               selected={selectedMenu === 0}
-              onClick={(event) => handleMenuClick(event, 0)}
+              onClick={(event) => handleMenuClick(event, 0, "dashboard")}
             >
               <ListItemIcon>
                 <Dashboard />
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
+            </ListItemButton>
+          </List>
+
+          <List component="nav" aria-label="main mailbox folders">
+            <ListItemButton
+              selected={selectedMenu === 1}
+              onClick={(event) => handleMenuClick(event, 1, "user")}
+            >
+              <ListItemIcon>
+                <Person />
+              </ListItemIcon>
+              <ListItemText primary="User" />
             </ListItemButton>
           </List>
         </Box>
