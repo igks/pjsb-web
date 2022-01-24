@@ -8,20 +8,12 @@
 //
 //===================================================
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 import SideBar from "navigations/SideBar";
 import NavBar from "navigations/NavBar";
+import NavigationRoute from "navigations/NavigationRoute";
 
 const DefaultLayout = () => {
-  const history = useHistory();
-
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  if (!isAuthenticated) {
-    history.push("/login");
-  }
-
   return (
     <Grid container sx={{ height: "100%" }}>
       <Grid item xs={3}>
@@ -30,6 +22,7 @@ const DefaultLayout = () => {
       <Grid item xs={9}>
         <Box>
           <NavBar />
+          <NavigationRoute />
         </Box>
       </Grid>
     </Grid>

@@ -9,34 +9,29 @@
 //===================================================
 import React from "react";
 import { useSelector } from "react-redux";
-import { Switch } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Redirect, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
-import Dashboard from "../pages/main/Dashboard";
+import routes from "navigations/routes";
 
 const NavigationRoute = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const containerHeigh = window.innerHeight - 120 - 80;
 
   return (
-    <>
-      <Box
-        sx={{
-          height: containerHeigh,
-          overflow: "scroll",
-          position: "relative",
-        }}
-      >
-        <Switch>
+    <Switch>
+      {routes.map((route, index) => {
+        return route.private ? (
           <PrivateRoute
-            exact
-            path="/dashboard"
-            component={Dashboard}
+            key={index}
+            path={route.path}
+            component={route.component}
             auth={isAuthenticated}
           />
-        </Switch>
-      </Box>
-    </>
+        ) : (
+          <Route key={index} path={route.path} component={route.component} />
+        );
+      })}
+      <Redirect from="/" to="/dashboard" />
+    </Switch>
   );
 };
 
