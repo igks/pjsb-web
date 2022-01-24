@@ -13,14 +13,12 @@ import Login from "pages/authentication/Login";
 
 const EntryRoute = () => {
   return (
-    <>
-      <Router>
-        <Switch>
-          <Route exact path="/" component={DefaultLayout} />
-          <Route exact path="/login" component={Login} />
-        </Switch>
-      </Router>
-    </>
+    <Router>
+      <Switch>
+        <Route exact path="/login" component={Login} />
+        <Route path="/" component={DefaultLayout} />
+      </Switch>
+    </Router>
   );
 };
 
