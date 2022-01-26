@@ -22,7 +22,7 @@ import TablePaginations from "./TablePaginations";
 
 const TableList = (props) => {
   const { name } = props.name;
-  const { headers, orderBy, isDesc, onSortChange } = props.tableHeader;
+  const { headers, orderBy, isDescending, onSortChange } = props.tableHeader;
   const { records, hiddenField, onUpdate, onDelete } = props.tableBody;
   const { totalItems, pageSize, page, onPageChange, onRowPerPageChange } =
     props.tableFooter;
@@ -36,7 +36,7 @@ const TableList = (props) => {
               name={name}
               headers={headers}
               orderBy={orderBy}
-              isDesc={isDesc}
+              isDescending={isDescending}
               onSortChange={onSortChange}
             />
           </TableHead>

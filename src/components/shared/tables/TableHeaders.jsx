@@ -10,10 +10,10 @@
 import React from "react";
 import { Box, TableRow, TableCell } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import * as Colors from "../../../constants/colors";
+import * as Colors from "constants/colors";
 
 const TableHeaders = (props) => {
-  const { name, headers, orderBy, isDesc, onSortChange } = props;
+  const { name, headers, orderBy, isDescending, onSortChange } = props;
 
   const handleSort = (value) => {
     const field = headers.find((obj) => obj.id === value);
@@ -42,7 +42,7 @@ const TableHeaders = (props) => {
                 {headCell.label}
                 {headCell.isSortable &&
                   (orderBy === headCell.id ? (
-                    isDesc ? (
+                    isDescending ? (
                       <ExpandLess />
                     ) : (
                       <ExpandMore />
