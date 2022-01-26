@@ -57,8 +57,8 @@ const Login = () => {
   };
 
   return (
-    <Container>
-      <Box sx={{ p: 1, backgroundColor: Color.primary }}>
+    <Container sx={{ height: "100%" }}>
+      {/* <Box sx={{ p: 1, backgroundColor: Color.primary }}>
         <Box display="flex" flexDirection="row" alignItems="center">
           <Spacer width={20} />
           <Typography
@@ -68,7 +68,7 @@ const Login = () => {
             E-Pasraman
           </Typography>
         </Box>
-      </Box>
+      </Box> */}
 
       <Box
         width="100%"
@@ -76,7 +76,7 @@ const Login = () => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="80vh"
+        height="100%"
       >
         <Paper elevation={5} sx={{ width: "30%", px: 3, py: 5 }}>
           <Box
