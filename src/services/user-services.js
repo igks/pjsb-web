@@ -1,7 +1,7 @@
 //===================================================
 // Date         : 04 Nov 2021
 // Author       : I Gusti Kade Sugiantara
-// Description  :API service
+// Description  : API service
 //===================================================
 // Revision History:
 // Name             Date            Description
@@ -62,5 +62,12 @@ export const remove = async (id) => {
   let target = `${baseTarget}/${id}`;
 
   const result = await API.delete(target);
+  return result;
+};
+
+export const deactivate = async (id) => {
+  let target = `${baseTarget}/${id}/activation`;
+
+  const result = await API.post(target);
   return result;
 };
