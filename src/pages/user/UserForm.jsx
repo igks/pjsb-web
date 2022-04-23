@@ -37,7 +37,6 @@ const MasterForm = () => {
   const loadUser = async (id) => {
     const response = await getOne(id);
     if (response?.success) {
-      console.log(response);
       setValue("name", response.data.name);
       setValue("email", response.data.email);
       setValue("is_active", response.data.is_active);
