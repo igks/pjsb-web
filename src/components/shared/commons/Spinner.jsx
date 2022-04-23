@@ -8,8 +8,8 @@
 //
 //===================================================
 import React from "react";
-import SpinnerGif from "../../images/spinner.gif";
-const Spinner = ({ width, height }) => {
+import SpinnerGif from "assets/images/spinner.gif";
+const Spinner = ({ width = 100, height = 100 }) => {
   return (
     <div>
       <img src={SpinnerGif} alt="" width={width} height={height} />
