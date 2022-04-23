@@ -65,6 +65,18 @@ const SideBar = () => {
               <ListItemText primary="User" />
             </ListItemButton>
           </List>
+
+          <List component="nav" aria-label="main mailbox folders">
+            <ListItemButton
+              selected={selectedMenu === 2}
+              onClick={(event) => handleMenuClick(event, 2, "subject")}
+            >
+              <ListItemIcon>
+                <Person />
+              </ListItemIcon>
+              <ListItemText primary="Subjects" />
+            </ListItemButton>
+          </List>
         </Box>
       </Box>
     </>
