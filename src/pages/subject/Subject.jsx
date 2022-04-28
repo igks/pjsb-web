@@ -15,7 +15,7 @@ const Subject = () => {
   const history = useHistory();
 
   const classList = Array.from(Array(13).keys()).map((i) => (
-    <Grid item xs={3}>
+    <Grid key={`subject-${i}`} item xs={3}>
       <Paper
         elevation={3}
         sx={{
@@ -28,7 +28,7 @@ const Subject = () => {
         }}
         onClick={() => goToClassContent(i)}
       >
-        <Typography variant="h3">{i == 0 ? "PAUD" : i}</Typography>
+        <Typography variant="h3">{i === 0 ? "PAUD" : i}</Typography>
       </Paper>
     </Grid>
   ));
