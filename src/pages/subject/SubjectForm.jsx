@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { Box, TextField, Typography } from "@mui/material";
@@ -14,23 +14,21 @@ const SubjectForm = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [currentId, setCurrentId] = useState(null);
+  const [contentId, setContentId] = useState(null);
 
-  // const loadUser = async (id) => {
-  //   const response = await getOne(id);
-  //   if (response?.success) {
-  //     setValue("name", response.data.name);
-  //     setValue("email", response.data.email);
-  //     setValue("is_active", response.data.is_active);
-  //     setValue("role", response.data.role);
-  //   }
-  // };
+  const loadSubject = async (id) => {
+    const response = await getOne(id);
+    if (response?.success) {
+      setValue("chapter", response.data.data.chapter);
+      setValue("title", response.data.data.title);
+    }
+  };
 
   const createNewRecord = async (formData) => {
     let response = await create(formData);
     if (response?.success) {
       dispatch(showAlert("success", "New record added successfully."));
-      history.push("/content", { id: history.location.state.idClass });
+      history.push("/content", { id: history.location.state.levelId });
     } else {
       if (response?.errors != null) {
         Object.keys(response.errors).forEach((key) => {
@@ -44,10 +42,10 @@ const SubjectForm = () => {
   };
 
   const updateExistingRecord = async (formData) => {
-    let response = await update(currentId, formData);
+    let response = await update(contentId, formData);
     if (response.success) {
       dispatch(showAlert("success", "Record updated successfully."));
-      history.push("/user");
+      history.push("/content", { id: history.location.state.levelId });
     } else {
       if (response?.errors != null) {
         Object.keys(response.errors).forEach((key) => {
@@ -61,31 +59,34 @@ const SubjectForm = () => {
   };
 
   const onSubmit = async (formData) => {
-    formData.level = history.location.state.idClass;
-    if (currentId == null) {
+    formData.level = history.location.state.levelId;
+    if (contentId == null) {
       createNewRecord(formData);
     } else {
-      formData.id = currentId;
+      formData.id = contentId;
       updateExistingRecord(formData);
     }
   };
 
   const {
     handleSubmit,
-    register,
     formState: { errors },
     setError,
     setValue,
+    control,
   } = useForm();
 
   useEffect(() => {
-    let id = history.location.state?.id;
-    if (id !== null && id !== undefined) {
-      setCurrentId(id);
-      // loadUser(id);
+    let contentId = history.location.state?.contentId;
+
+    if (contentId !== null && contentId !== undefined) {
+      setContentId(contentId);
+      loadSubject(contentId);
     }
+
     // eslint-disable-next-line
   }, []);
+
   return (
     <>
       <Box
@@ -105,48 +106,64 @@ const SubjectForm = () => {
           }}
         >
           Add New Subject For{" "}
-          {history.location.state.idClass == 0
+          {history.location.state.idClass === 0
             ? "PAUD"
             : "Level " + history.location.state.idClass}
         </Typography>
 
         <Box>
           <Box mb={3}>
-            <TextField
-              fullWidth
-              label={"Chapter"}
-              variant="standard"
-              type="number"
-              {...register("chapter", {
+            <Controller
+              name={"chapter"}
+              control={control}
+              rules={{
                 required: {
                   value: true,
                   message: "Field is required!",
                 },
-              })}
-              InputLabelProps={{
-                shrink: true,
               }}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  label={"Chapter"}
+                  variant="standard"
+                  type="number"
+                  onChange={onChange}
+                  value={value}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              )}
             />
             {errors.chapter && (
               <ErrorMessage>{errors.chapter.message}</ErrorMessage>
             )}
           </Box>
           <Box mb={3}>
-            <TextField
-              fullWidth
-              label={"Title"}
-              variant="standard"
-              type="email"
-              {...register("title", {
+            <Controller
+              name={"title"}
+              control={control}
+              rules={{
                 required: {
                   value: true,
                   message: "Field is required!",
                 },
-              })}
-              InputLabelProps={{
-                shrink: true,
               }}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  label={"Title"}
+                  variant="standard"
+                  onChange={onChange}
+                  value={value}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              )}
             />
+
             {errors.title && (
               <ErrorMessage>{errors.title.message}</ErrorMessage>
             )}
@@ -156,7 +173,7 @@ const SubjectForm = () => {
             <Box>
               <IconLabelButton
                 icon={<List />}
-                text={currentId ? "Update" : "Add"}
+                text={contentId ? "Update" : "Add"}
                 color="primary"
                 action={handleSubmit(onSubmit)}
               />

@@ -8,16 +8,25 @@
 //
 //===================================================
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Typography, Grid, Paper, Alert, Box, Button } from "@mui/material";
-import { getByClass } from "services/content-services";
+import { Typography, Paper, Alert, Box, Button } from "@mui/material";
+import { DeleteForever, Edit } from "@mui/icons-material";
+import { getByClass, remove } from "services/content-services";
 import Spinner from "components/shared/commons/Spinner";
+import Spacer from "components/shared/commons/Spacer";
+import { showAlert } from "redux/actions/alert";
+import ConfirmationDialog from "components/shared/pop-up-dialog/ConfirmationDialog";
 
 const ClassContent = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+
   const [classId, setClassId] = useState(null);
   const [contents, setContent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const loadContent = async () => {
     const id = history.location.state.id;
@@ -26,6 +35,27 @@ const ClassContent = () => {
       setContent(res.data.data.data);
     }
     setIsLoading(false);
+  };
+
+  const onEdit = (id) => {
+    history.push("/subject-form", { levelId: classId, contentId: id });
+  };
+
+  const onDelete = (id) => {
+    setDeleteId(id);
+    setIsOpenDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId == null) return;
+
+    const response = await remove(deleteId);
+    if (response?.success) {
+      setDeleteId(null);
+      setIsOpenDialog(false);
+      dispatch(showAlert("success", "Record delete successfully!"));
+      loadContent();
+    }
   };
 
   useEffect(() => {
@@ -39,6 +69,9 @@ const ClassContent = () => {
       <Paper
         key={`subject-${content.id}`}
         sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
           padding: 1,
           marginBottom: 2,
           ":hover": { boxShadow: 5 },
@@ -46,19 +79,29 @@ const ClassContent = () => {
         }}
       >
         <Typography variant="h6">{content.title}</Typography>
+        <Box display="flex" flexDirection="row">
+          <Edit color="info" onClick={() => onEdit(content.id)} />
+          <Spacer width={15} height={0} />
+          <DeleteForever
+            color="error"
+            onClick={() => {
+              onDelete(content.id);
+            }}
+          />
+        </Box>
       </Paper>
     );
   };
 
   const goToSubjectForm = (idClass) => {
-    history.push("/subject-form", { idClass });
+    history.push("/subject-form", { levelId: idClass });
   };
 
   return (
     <>
       <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography mb={3} variant="h4">
-          {classId == 0 ? "PAUD" : "Level " + classId}
+          {classId === 0 ? "PAUD" : "Level " + classId}
         </Typography>
         <Box>
           <Button
@@ -71,7 +114,8 @@ const ClassContent = () => {
           </Button>
         </Box>
       </Box>
-      {isLoading == true ? (
+
+      {isLoading === true ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -85,6 +129,16 @@ const ClassContent = () => {
       ) : (
         <Alert severity="info">No Subject Found!</Alert>
       )}
+
+      <ConfirmationDialog
+        isOpen={isOpenDialog}
+        onCancel={() => {
+          setDeleteId(null);
+          setIsOpenDialog(false);
+        }}
+        onConfirm={confirmDelete}
+        message="Do you want to delete this record?"
+      />
     </>
   );
 };
