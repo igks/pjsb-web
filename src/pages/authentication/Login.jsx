@@ -11,18 +11,10 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Container,
-} from "@mui/material";
+import { Box, TextField, Button, Paper, Container } from "@mui/material";
 import { login } from "services/auth-services";
 import { showAlert } from "redux/actions/alert";
 import { loginSuccess } from "redux/actions/auth";
-import Spacer from "components/shared/commons/Spacer";
 import Logo from "assets/images/logo.png";
 import * as Color from "constants/colors";
 import ErrorMessage from "components/shared/commons/ErrorMessage";
@@ -58,18 +50,6 @@ const Login = () => {
 
   return (
     <Container sx={{ height: "100%" }}>
-      {/* <Box sx={{ p: 1, backgroundColor: Color.primary }}>
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Spacer width={20} />
-          <Typography
-            variant="h2"
-            sx={{ color: "white", fontSize: 30, fontWeight: "bold" }}
-          >
-            E-Pasraman
-          </Typography>
-        </Box>
-      </Box> */}
-
       <Box
         width="100%"
         display="flex"
