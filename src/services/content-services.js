@@ -8,7 +8,7 @@
 //
 //===================================================
 import * as API from "./http-service";
-const baseTarget = "users";
+const baseTarget = "contents";
 
 export const getPage = async (params) => {
   let target = `${baseTarget}`;
@@ -30,6 +30,13 @@ export const getPage = async (params) => {
 
 export const getOne = async (id) => {
   let target = `${baseTarget}/${id}`;
+
+  const result = await API.get(target);
+  return result;
+};
+
+export const getByClass = async (id) => {
+  let target = `${baseTarget}/level/${id}`;
 
   const result = await API.get(target);
   return result;

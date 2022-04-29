@@ -8,14 +8,18 @@
 //
 //===================================================
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button } from "@mui/material";
 import Spacer from "components/shared/commons/Spacer";
 import TableList from "components/shared/tables";
-import { getPage } from "services/user-services";
+import { getPage, deactivate, remove } from "services/user-services";
+import { showAlert } from "redux/actions/alert";
+import ConfirmationDialog from "components/shared/pop-up-dialog/ConfirmationDialog";
 
 const UserGrid = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [users, setUsers] = useState([]);
   const [isDescending, setIsDescending] = useState(0);
@@ -23,6 +27,10 @@ const UserGrid = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const roles = ["Admin", "Teacher", "Student"];
 
   const headers = [
     { id: "name", label: "Name", isSortable: true },
@@ -31,6 +39,7 @@ const UserGrid = () => {
     { id: "role", label: "Role", isSortable: false },
     { id: "option", label: "Options", isSortable: false },
   ];
+
   const loadUser = async () => {
     let params = {
       search: "",
@@ -41,8 +50,13 @@ const UserGrid = () => {
     };
 
     const response = await getPage(params);
-    if (response.success) {
-      setUsers(response.data.data.records);
+    if (response?.success) {
+      let users = response.data.data.records.map((user) => ({
+        ...user,
+        role: roles[user.role],
+        is_active: user.is_active ? "Active" : "Not Active",
+      }));
+      setUsers(users);
       updatePagination(response.data.data.pagination);
     }
   };
@@ -73,11 +87,32 @@ const UserGrid = () => {
   };
 
   const onAddRecord = () => {
-    history.push("/master-form");
+    history.push("/user-form");
   };
 
-  const onUpdateRecord = (id) => {
-    history.push("/master-form", { id: id });
+  const onUpdateRecord = async (id) => {
+    const response = await deactivate(id);
+    if (response?.success) {
+      dispatch(showAlert("success", "Record update successfully!"));
+      loadUser();
+    }
+  };
+
+  const onDelete = (id) => {
+    setDeleteId(id);
+    setIsOpenDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId == null) return;
+
+    const response = await remove(deleteId);
+    if (response?.success) {
+      setDeleteId(null);
+      setIsOpenDialog(false);
+      dispatch(showAlert("success", "Record delete successfully!"));
+      loadUser();
+    }
   };
 
   useEffect(() => {
@@ -96,7 +131,7 @@ const UserGrid = () => {
     records: users,
     hiddenField: ["id"],
     onUpdate: (id) => onUpdateRecord(id),
-    onDelete: (value) => console.log(value),
+    onDelete: (id) => onDelete(id),
   };
 
   const tableFooter = {
@@ -118,6 +153,15 @@ const UserGrid = () => {
         tableHeader={tableHeader}
         tableBody={tableBody}
         tableFooter={tableFooter}
+      />
+      <ConfirmationDialog
+        isOpen={isOpenDialog}
+        onCancel={() => {
+          setDeleteId(null);
+          setIsOpenDialog(false);
+        }}
+        onConfirm={confirmDelete}
+        message="Do you want to delete this record?"
       />
     </>
   );

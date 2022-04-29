@@ -40,8 +40,13 @@ const ConfirmationDialog = ({ isOpen, onCancel, onConfirm, message }) => {
           <Button variant="outlined" color="error" onClick={onCancel}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={onConfirm}>
-            Confirm
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onConfirm}
+            sx={{ color: "white", fontWeight: "bold" }}
+          >
+            YES
           </Button>
         </DialogActions>
       </Dialog>

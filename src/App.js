@@ -11,7 +11,7 @@ import store from "redux/store";
 import { Provider } from "react-redux";
 import EntryRoute from "navigations/EntryRoute";
 import CustomAlert from "components/shared/commons/CustomAlert";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider, Box } from "@mui/material";
 import * as Color from "constants/colors";
 
 const App = () => {
@@ -45,12 +45,14 @@ const App = () => {
   });
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <EntryRoute />
-        <CustomAlert />
-      </ThemeProvider>
-    </Provider>
+    <Box sx={{ paddingLeft: 2, paddingRight: 2 }}>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <EntryRoute />
+          <CustomAlert />
+        </ThemeProvider>
+      </Provider>
+    </Box>
   );
 };
 
