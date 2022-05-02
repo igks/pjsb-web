@@ -70,7 +70,7 @@ const ClassContent = () => {
 
   const contentCard = (content) => {
     return (
-      <Paper
+      <Box
         key={`subject-${content.id}`}
         sx={{
           display: "flex",
@@ -78,23 +78,38 @@ const ClassContent = () => {
           justifyContent: "space-between",
           padding: 1,
           marginBottom: 2,
-          ":hover": { boxShadow: 5 },
-          cursor: "pointer",
         }}
-        onClick={() => goToDetail(content.id)}
       >
-        <Typography variant="h6">{content.title}</Typography>
-        <Box display="flex" flexDirection="row">
-          <Edit color="info" onClick={() => onEdit(content.id)} />
-          <Spacer width={15} height={0} />
-          <DeleteForever
-            color="error"
-            onClick={() => {
-              onDelete(content.id);
-            }}
-          />
-        </Box>
-      </Paper>
+        <Paper
+          sx={{
+            width: "90%",
+            padding: 1,
+            ":hover": { boxShadow: 5 },
+            cursor: "pointer",
+          }}
+          onClick={() => goToDetail(content.id)}
+        >
+          <Typography variant="h6">{content.title}</Typography>
+        </Paper>
+        <Paper
+          sx={{
+            padding: 1,
+            ":hover": { boxShadow: 5 },
+            cursor: "pointer",
+          }}
+        >
+          <Box display="flex" flexDirection="row">
+            <Edit color="info" onClick={() => onEdit(content.id)} />
+            <Spacer width={15} height={0} />
+            <DeleteForever
+              color="error"
+              onClick={() => {
+                onDelete(content.id);
+              }}
+            />
+          </Box>
+        </Paper>
+      </Box>
     );
   };
 

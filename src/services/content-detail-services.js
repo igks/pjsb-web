@@ -71,10 +71,3 @@ export const remove = async (id) => {
   const result = await API.delete(target);
   return result;
 };
-
-export const deactivate = async (id) => {
-  let target = `${baseTarget}/${id}/activation`;
-
-  const result = await API.post(target);
-  return result;
-};
