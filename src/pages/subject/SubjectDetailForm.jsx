@@ -7,29 +7,24 @@ import { List } from "@mui/icons-material";
 import IconLabelButton from "components/shared/commons/IconLabelButton";
 import ErrorMessage from "components/shared/commons/ErrorMessage";
 import * as Colors from "constants/colors";
-import { create, update, getOne } from "services/content-services";
+import { create, update } from "services/content-detail-services";
 import { showAlert } from "redux/actions/alert";
 
-const SubjectForm = () => {
+const SubjectDetailForm = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const contentId = history.location.state?.contentId;
-  const levelId = history.location.state?.levelId;
-
-  const loadSubject = async (id) => {
-    const response = await getOne(id);
-    if (response?.success) {
-      setValue("chapter", response.data.data.chapter);
-      setValue("title", response.data.data.title);
-    }
-  };
+  const content = history.location.state?.content;
+  const detail = history.location.state?.detail ?? null;
 
   const createNewRecord = async (formData) => {
     let response = await create(formData);
     if (response?.success) {
       dispatch(showAlert("success", "New record added successfully."));
-      history.push("/content", { id: history.location.state.levelId });
+      history.push("/content-details", {
+        levelId: content.level,
+        contentId: content.id,
+      });
     } else {
       if (response?.errors != null) {
         Object.keys(response.errors).forEach((key) => {
@@ -43,10 +38,13 @@ const SubjectForm = () => {
   };
 
   const updateExistingRecord = async (formData) => {
-    let response = await update(contentId, formData);
+    let response = await update(detail.id, formData);
     if (response.success) {
       dispatch(showAlert("success", "Record updated successfully."));
-      history.push("/content", { id: history.location.state.levelId });
+      history.push("/content-details", {
+        levelId: content.level,
+        contentId: content.id,
+      });
     } else {
       if (response?.errors != null) {
         Object.keys(response.errors).forEach((key) => {
@@ -60,11 +58,12 @@ const SubjectForm = () => {
   };
 
   const onSubmit = async (formData) => {
-    formData.level = levelId;
-    if (contentId == null) {
+    if (detail == null) {
+      formData.content_id = content.id;
       createNewRecord(formData);
     } else {
-      formData.id = contentId;
+      formData.id = detail.id;
+      formData.content_id = detail.content_id;
       updateExistingRecord(formData);
     }
   };
@@ -78,10 +77,11 @@ const SubjectForm = () => {
   } = useForm();
 
   useEffect(() => {
-    if (contentId !== null && contentId !== undefined) {
-      loadSubject(contentId);
+    if (detail != null) {
+      setValue("section", detail.section);
+      setValue("title", detail.title);
+      setValue("video_url", detail.video_url);
     }
-
     // eslint-disable-next-line
   }, []);
 
@@ -103,19 +103,17 @@ const SubjectForm = () => {
             mb: 2,
           }}
         >
-          {contentId !== null && contentId !== undefined
-            ? "Edit Existing"
-            : "Add New"}{" "}
-          Subject For{" "}
-          {history.location.state?.levelId === 0
-            ? "PAUD"
-            : "Level " + history.location.state?.levelId}
+          {detail != null ? "Edit Existing" : "Add New"} Content to Subject{" "}
+          {content.title}
+          {history.location.state.levelId === 0
+            ? " PAUD"
+            : " Level " + history.location.state.levelId}
         </Typography>
 
         <Box>
           <Box mb={3}>
             <Controller
-              name={"chapter"}
+              name={"section"}
               control={control}
               rules={{
                 required: {
@@ -126,7 +124,7 @@ const SubjectForm = () => {
               render={({ field: { onChange, value } }) => (
                 <TextField
                   fullWidth
-                  label={"Chapter"}
+                  label={"Section"}
                   variant="standard"
                   type="number"
                   onChange={onChange}
@@ -137,8 +135,8 @@ const SubjectForm = () => {
                 />
               )}
             />
-            {errors.chapter && (
-              <ErrorMessage>{errors.chapter.message}</ErrorMessage>
+            {errors.section && (
+              <ErrorMessage>{errors.section.message}</ErrorMessage>
             )}
           </Box>
           <Box mb={3}>
@@ -170,11 +168,40 @@ const SubjectForm = () => {
             )}
           </Box>
 
+          <Box mb={3}>
+            <Controller
+              name={"video_url"}
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Field is required!",
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  label={"Video URL"}
+                  variant="standard"
+                  onChange={onChange}
+                  value={value}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              )}
+            />
+
+            {errors.video_url && (
+              <ErrorMessage>{errors.video_url.message}</ErrorMessage>
+            )}
+          </Box>
+
           <Box display="flex" alignItems="start" justifyContent="end">
             <Box>
               <IconLabelButton
                 icon={<List />}
-                text={contentId ? "Update" : "Add"}
+                text={detail != null ? "Update" : "Add"}
                 color="primary"
                 action={handleSubmit(onSubmit)}
               />
@@ -186,4 +213,4 @@ const SubjectForm = () => {
   );
 };
 
-export default SubjectForm;
+export default SubjectDetailForm;

@@ -5,6 +5,7 @@ import Subject from "pages/subject/Subject";
 import ClassContent from "pages/subject/ClassContent";
 import SubjectForm from "pages/subject/SubjectForm";
 import ContentDetail from "pages/subject/SubjectDetail";
+import SubjectDetailForm from "pages/subject/SubjectDetailForm";
 
 const routes = [
   {
@@ -18,6 +19,7 @@ const routes = [
   { path: "/content", component: ClassContent, private: true },
   { path: "/subject-form", component: SubjectForm, private: true },
   { path: "/content-details", component: ContentDetail, private: true },
+  { path: "/subject-detail-form", component: SubjectDetailForm, private: true },
 ];
 
 export default routes;

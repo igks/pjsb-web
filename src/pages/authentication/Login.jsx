@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <Container sx={{ height: "100%" }}>
+    <Container sx={{ height: "100vh" }}>
       <Box
         width="100%"
         display="flex"

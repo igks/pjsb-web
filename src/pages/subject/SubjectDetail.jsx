@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Typography, Paper, Alert, Box, Button, Grid } from "@mui/material";
-import { DeleteForever, Edit } from "@mui/icons-material";
+import { DeleteForever, Edit, Preview } from "@mui/icons-material";
 import { getByContent, remove } from "services/content-detail-services";
 import Spinner from "components/shared/commons/Spinner";
 import Spacer from "components/shared/commons/Spacer";
@@ -29,9 +29,15 @@ const SubjectDetail = () => {
     setIsLoading(false);
   };
 
-  const onEdit = (id) => {
-    // history.push("/subject-form", { levelId: classId, contentId: id });
+  const onEdit = (detail) => {
+    history.push("/subject-detail-form", {
+      levelId: levelId,
+      detail,
+      content: details[0].content,
+    });
   };
+
+  const onView = (content) => {};
 
   const onDelete = (id) => {
     setDeleteId(id);
@@ -61,17 +67,23 @@ const SubjectDetail = () => {
         key={`subject-${content.id}`}
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           justifyContent: "space-between",
           padding: 1,
           marginBottom: 2,
           ":hover": { boxShadow: 5 },
           cursor: "pointer",
+          height: 150,
         }}
       >
-        <Typography variant="h6">{content.title}</Typography>
+        <Box>
+          <Typography variant="h4">{content.title}</Typography>
+          <Typography variant="h6">{content.video_url}</Typography>
+        </Box>
         <Box display="flex" flexDirection="row">
-          <Edit color="info" onClick={() => onEdit(content.id)} />
+          <Preview color="success" onClick={() => onView(content)} />
+          <Spacer width={15} height={0} />
+          <Edit color="info" onClick={() => onEdit(content)} />
           <Spacer width={15} height={0} />
           <DeleteForever
             color="error"
@@ -84,8 +96,11 @@ const SubjectDetail = () => {
     );
   };
 
-  const goToSubjectForm = (idClass) => {
-    history.push("/subject-form", { levelId: idClass });
+  const goToSubjectForm = (content) => {
+    history.push("/subject-detail-form", {
+      levelId: levelId,
+      content,
+    });
   };
 
   return (
@@ -99,7 +114,7 @@ const SubjectDetail = () => {
           <Button
             variant="outlined"
             onClick={() => {
-              goToSubjectForm(levelId);
+              goToSubjectForm(details[0].content);
             }}
           >
             Add Detail
@@ -119,7 +134,7 @@ const SubjectDetail = () => {
       ) : details.length > 0 ? (
         <Grid container spacing={3}>
           {details.map((content, i) => (
-            <Grid key={`subject-${i}`} item xs={3}>
+            <Grid key={`subject-${i}`} item xs={6}>
               {contentCard(content)}
             </Grid>
           ))}
