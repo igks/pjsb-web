@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, Breadcrumbs, Link } from "@mui/material";
 import { List, Folder } from "@mui/icons-material";
 import IconLabelButton from "components/shared/commons/IconLabelButton";
 import ErrorMessage from "components/shared/commons/ErrorMessage";
@@ -116,6 +116,46 @@ const SubjectDetailForm = () => {
 
   return (
     <>
+      <Box my={2}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/subject");
+            }}
+          >
+            Subject
+          </Link>
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/content", { id: content.level });
+            }}
+          >
+            Level
+          </Link>
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/content-details", {
+                levelId: content.level,
+                contentId: content.id,
+              });
+            }}
+          >
+            Contents
+          </Link>
+          <Typography color="textPrimary">
+            {detail !== null && detail !== undefined ? "Edit " : "Add "} Content
+          </Typography>
+        </Breadcrumbs>
+      </Box>
       <Box
         sx={{
           p: 1,
