@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Typography, Paper, Alert, Box, Button, Grid } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  Alert,
+  Box,
+  Button,
+  Grid,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+} from "@mui/material";
 import { DeleteForever, Edit, Preview } from "@mui/icons-material";
 import { getByContent, remove } from "services/content-detail-services";
 import Spinner from "components/shared/commons/Spinner";
@@ -63,36 +74,36 @@ const SubjectDetail = () => {
 
   const contentCard = (content) => {
     return (
-      <Paper
-        key={`subject-${content.id}`}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: 1,
-          marginBottom: 2,
-          ":hover": { boxShadow: 5 },
-          cursor: "pointer",
-          height: 150,
-        }}
-      >
-        <Box>
-          <Typography variant="h4">{content.title}</Typography>
-          <Typography variant="h6">{content.video_url}</Typography>
-        </Box>
-        <Box display="flex" flexDirection="row">
-          <Preview color="success" onClick={() => onView(content)} />
-          <Spacer width={15} height={0} />
-          <Edit color="info" onClick={() => onEdit(content)} />
-          <Spacer width={15} height={0} />
-          <DeleteForever
-            color="error"
-            onClick={() => {
-              onDelete(content.id);
-            }}
-          />
-        </Box>
-      </Paper>
+      <Card>
+        <CardMedia
+          component="img"
+          height="250"
+          image={`${process.env.REACT_APP_ASSETS_DOMAIN}storage/${content.thumbnail}`}
+          alt="Thumbnail"
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {content.title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {content.title}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Box display="flex" flexDirection="row">
+            <Preview color="success" onClick={() => onView(content)} />
+            <Spacer width={15} height={0} />
+            <Edit color="info" onClick={() => onEdit(content)} />
+            <Spacer width={15} height={0} />
+            <DeleteForever
+              color="error"
+              onClick={() => {
+                onDelete(content.id);
+              }}
+            />
+          </Box>
+        </CardActions>
+      </Card>
     );
   };
 
@@ -134,7 +145,7 @@ const SubjectDetail = () => {
       ) : details.length > 0 ? (
         <Grid container spacing={3}>
           {details.map((content, i) => (
-            <Grid key={`subject-${i}`} item xs={6}>
+            <Grid key={`subject-${i}`} item xs={4}>
               {contentCard(content)}
             </Grid>
           ))}

@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { Box, TextField, Typography } from "@mui/material";
-import { List } from "@mui/icons-material";
+import { List, Folder } from "@mui/icons-material";
 import IconLabelButton from "components/shared/commons/IconLabelButton";
 import ErrorMessage from "components/shared/commons/ErrorMessage";
 import * as Colors from "constants/colors";
@@ -12,13 +12,30 @@ import { showAlert } from "redux/actions/alert";
 
 const SubjectDetailForm = () => {
   const history = useHistory();
+  const fileInput = useRef();
   const dispatch = useDispatch();
+
+  const [file, setFile] = useState(null);
 
   const content = history.location.state?.content;
   const detail = history.location.state?.detail ?? null;
 
+  const {
+    handleSubmit,
+    formState: { errors },
+    setError,
+    setValue,
+    control,
+  } = useForm();
+
   const createNewRecord = async (formData) => {
-    let response = await create(formData);
+    let formsData = new FormData();
+    formsData.append("section", formData.section);
+    formsData.append("title", formData.title);
+    formsData.append("video_url", formData.video_url);
+    formsData.append("content_id", formData.content_id);
+    formsData.append("thumbnail", file);
+    let response = await create(formsData);
     if (response?.success) {
       dispatch(showAlert("success", "New record added successfully."));
       history.push("/content-details", {
@@ -57,6 +74,18 @@ const SubjectDetailForm = () => {
     }
   };
 
+  const onFileChange = (e) => {
+    const fileSize = e.target.files[0].size / 1024 / 1024; // in MiB
+    if (fileSize > 2) {
+      dispatch(
+        showAlert("error", "File size more than 2MB, please select other file.")
+      );
+      return;
+    }
+    setFile(e.target.files[0]);
+    setValue("thumbnail", e.target.files[0].name);
+  };
+
   const onSubmit = async (formData) => {
     if (detail == null) {
       formData.content_id = content.id;
@@ -68,18 +97,11 @@ const SubjectDetailForm = () => {
     }
   };
 
-  const {
-    handleSubmit,
-    formState: { errors },
-    setError,
-    setValue,
-    control,
-  } = useForm();
-
   useEffect(() => {
     if (detail != null) {
       setValue("section", detail.section);
       setValue("title", detail.title);
+      setValue("thumbnail", detail.thumbnail);
       setValue("video_url", detail.video_url);
     }
     // eslint-disable-next-line
@@ -166,6 +188,46 @@ const SubjectDetailForm = () => {
             {errors.title && (
               <ErrorMessage>{errors.title.message}</ErrorMessage>
             )}
+          </Box>
+
+          <Box mb={3} display="flex" flexDirection="row">
+            <Controller
+              name={"thumbnail"}
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Field is required!",
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  label={"Thumbnail"}
+                  variant="standard"
+                  value={value}
+                  onChange={onChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              )}
+            />
+            <Box>
+              <IconLabelButton
+                icon={<Folder />}
+                text={"Browse"}
+                color="info"
+                action={() => fileInput?.current?.click()}
+              />
+            </Box>
+            <input
+              accept="image/png, image/jpeg, image/jpg"
+              type="file"
+              onChange={onFileChange}
+              hidden
+              ref={fileInput}
+            />
           </Box>
 
           <Box mb={3}>
