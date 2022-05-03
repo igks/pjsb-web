@@ -10,7 +10,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Typography, Paper, Alert, Box, Button } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  Alert,
+  Box,
+  Button,
+  Breadcrumbs,
+  Link,
+} from "@mui/material";
 import { DeleteForever, Edit } from "@mui/icons-material";
 import { getByClass, remove } from "services/content-services";
 import Spinner from "components/shared/commons/Spinner";
@@ -119,6 +127,21 @@ const ClassContent = () => {
 
   return (
     <>
+      <Box my={2}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/subject");
+            }}
+          >
+            Subject
+          </Link>
+          <Typography color="textPrimary">Level</Typography>
+        </Breadcrumbs>
+      </Box>
       <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography mb={3} variant="h4">
           {classId === 0 ? "PAUD" : "Level " + classId}
