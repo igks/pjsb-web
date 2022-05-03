@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   Typography,
-  Paper,
   Alert,
   Box,
   Button,
@@ -15,6 +14,7 @@ import {
 } from "@mui/material";
 import { DeleteForever, Edit, Preview } from "@mui/icons-material";
 import { getByContent, remove } from "services/content-detail-services";
+import { getOne } from "services/content-services";
 import Spinner from "components/shared/commons/Spinner";
 import Spacer from "components/shared/commons/Spacer";
 import { showAlert } from "redux/actions/alert";
@@ -27,15 +27,20 @@ const SubjectDetail = () => {
   const levelId = history.location.state.levelId;
   const contentId = history.location.state.contentId;
 
+  const [content, setContent] = useState(null);
   const [details, setDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const loadContentDetail = async () => {
-    const res = await getByContent(contentId);
-    if (res?.success) {
-      setDetails(res.data.data.data);
+    const resDetail = await getByContent(contentId);
+    if (resDetail?.success) {
+      setDetails(resDetail.data.data.data);
+    }
+    const resContent = await getOne(contentId);
+    if (resContent?.success) {
+      setContent(resContent.data.data);
     }
     setIsLoading(false);
   };
@@ -78,7 +83,7 @@ const SubjectDetail = () => {
         <CardMedia
           component="img"
           height="250"
-          image={`${process.env.REACT_APP_ASSETS_DOMAIN}storage/${content.thumbnail}`}
+          image={`${process.env.REACT_APP_ASSETS_DOMAIN}storage/thumbnail/${content.thumbnail}`}
           alt="Thumbnail"
         />
         <CardContent>
@@ -119,13 +124,13 @@ const SubjectDetail = () => {
       <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography mb={3} variant="h4">
           {levelId === 0 ? "PAUD" : "Level " + levelId}{" "}
-          {details.length > 0 ? `- ${details[0].content.title}` : ""}
+          {content && content.title}
         </Typography>
         <Box>
           <Button
             variant="outlined"
             onClick={() => {
-              goToSubjectForm(details[0].content);
+              goToSubjectForm(content);
             }}
           >
             Add Detail
