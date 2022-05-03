@@ -53,7 +53,11 @@ const SubjectDetail = () => {
     });
   };
 
-  const onView = (content) => {};
+  const onView = (content) => {
+    history.push("/video-preview", {
+      content,
+    });
+  };
 
   const onDelete = (id) => {
     setDeleteId(id);
@@ -91,7 +95,7 @@ const SubjectDetail = () => {
             {content.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {content.title}
+            {content.video_url}
           </Typography>
         </CardContent>
         <CardActions>
