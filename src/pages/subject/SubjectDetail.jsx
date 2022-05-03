@@ -11,6 +11,8 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Breadcrumbs,
+  Link,
 } from "@mui/material";
 import { DeleteForever, Edit, Preview } from "@mui/icons-material";
 import { getByContent, remove } from "services/content-detail-services";
@@ -56,6 +58,8 @@ const SubjectDetail = () => {
   const onView = (content) => {
     history.push("/video-preview", {
       content,
+      levelId: levelId,
+      contentId: contentId,
     });
   };
 
@@ -125,6 +129,31 @@ const SubjectDetail = () => {
 
   return (
     <>
+      <Box my={2}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/subject");
+            }}
+          >
+            Subject
+          </Link>
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/content", { id: levelId });
+            }}
+          >
+            Level
+          </Link>
+          <Typography color="textPrimary">Contents</Typography>
+        </Breadcrumbs>
+      </Box>
       <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography mb={3} variant="h4">
           {levelId === 0 ? "PAUD" : "Level " + levelId}{" "}
