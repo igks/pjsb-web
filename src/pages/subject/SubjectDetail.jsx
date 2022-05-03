@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { Typography, Paper, Alert, Box, Button, Grid } from "@mui/material";
+import {
+  Typography,
+  Alert,
+  Box,
+  Button,
+  Grid,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Breadcrumbs,
+  Link,
+} from "@mui/material";
 import { DeleteForever, Edit, Preview } from "@mui/icons-material";
 import { getByContent, remove } from "services/content-detail-services";
+import { getOne } from "services/content-services";
 import Spinner from "components/shared/commons/Spinner";
 import Spacer from "components/shared/commons/Spacer";
 import { showAlert } from "redux/actions/alert";
@@ -16,15 +29,20 @@ const SubjectDetail = () => {
   const levelId = history.location.state.levelId;
   const contentId = history.location.state.contentId;
 
+  const [content, setContent] = useState(null);
   const [details, setDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   const loadContentDetail = async () => {
-    const res = await getByContent(contentId);
-    if (res?.success) {
-      setDetails(res.data.data.data);
+    const resDetail = await getByContent(contentId);
+    if (resDetail?.success) {
+      setDetails(resDetail.data.data.data);
+    }
+    const resContent = await getOne(contentId);
+    if (resContent?.success) {
+      setContent(resContent.data.data);
     }
     setIsLoading(false);
   };
@@ -37,7 +55,13 @@ const SubjectDetail = () => {
     });
   };
 
-  const onView = (content) => {};
+  const onView = (content) => {
+    history.push("/video-preview", {
+      content,
+      levelId: levelId,
+      contentId: contentId,
+    });
+  };
 
   const onDelete = (id) => {
     setDeleteId(id);
@@ -63,36 +87,36 @@ const SubjectDetail = () => {
 
   const contentCard = (content) => {
     return (
-      <Paper
-        key={`subject-${content.id}`}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: 1,
-          marginBottom: 2,
-          ":hover": { boxShadow: 5 },
-          cursor: "pointer",
-          height: 150,
-        }}
-      >
-        <Box>
-          <Typography variant="h4">{content.title}</Typography>
-          <Typography variant="h6">{content.video_url}</Typography>
-        </Box>
-        <Box display="flex" flexDirection="row">
-          <Preview color="success" onClick={() => onView(content)} />
-          <Spacer width={15} height={0} />
-          <Edit color="info" onClick={() => onEdit(content)} />
-          <Spacer width={15} height={0} />
-          <DeleteForever
-            color="error"
-            onClick={() => {
-              onDelete(content.id);
-            }}
-          />
-        </Box>
-      </Paper>
+      <Card>
+        <CardMedia
+          component="img"
+          height="250"
+          image={`${process.env.REACT_APP_ASSETS_DOMAIN}storage/thumbnail/${content.thumbnail}`}
+          alt="Thumbnail"
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {content.title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {content.video_url}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Box display="flex" flexDirection="row">
+            <Preview color="success" onClick={() => onView(content)} />
+            <Spacer width={15} height={0} />
+            <Edit color="info" onClick={() => onEdit(content)} />
+            <Spacer width={15} height={0} />
+            <DeleteForever
+              color="error"
+              onClick={() => {
+                onDelete(content.id);
+              }}
+            />
+          </Box>
+        </CardActions>
+      </Card>
     );
   };
 
@@ -105,16 +129,41 @@ const SubjectDetail = () => {
 
   return (
     <>
+      <Box my={2}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/subject");
+            }}
+          >
+            Subject
+          </Link>
+          <Link
+            color="inherit"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push("/content", { id: levelId });
+            }}
+          >
+            Level
+          </Link>
+          <Typography color="textPrimary">Contents</Typography>
+        </Breadcrumbs>
+      </Box>
       <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography mb={3} variant="h4">
           {levelId === 0 ? "PAUD" : "Level " + levelId}{" "}
-          {details.length > 0 ? `- ${details[0].content.title}` : ""}
+          {content && content.title}
         </Typography>
         <Box>
           <Button
             variant="outlined"
             onClick={() => {
-              goToSubjectForm(details[0].content);
+              goToSubjectForm(content);
             }}
           >
             Add Detail
@@ -134,7 +183,7 @@ const SubjectDetail = () => {
       ) : details.length > 0 ? (
         <Grid container spacing={3}>
           {details.map((content, i) => (
-            <Grid key={`subject-${i}`} item xs={6}>
+            <Grid key={`subject-${i}`} item xs={4}>
               {contentCard(content)}
             </Grid>
           ))}

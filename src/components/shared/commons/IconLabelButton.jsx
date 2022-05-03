@@ -21,7 +21,7 @@ const IconLabelButton = ({
   return (
     <>
       <Button
-        sx={{ width: "100%", height: height }}
+        sx={{ width: "100%", height: height, color: "white" }}
         variant={variant}
         startIcon={icon}
         color={color}

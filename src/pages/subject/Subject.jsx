@@ -9,7 +9,7 @@
 //===================================================
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Typography, Grid, Paper } from "@mui/material";
+import { Typography, Grid, Paper, Box, Breadcrumbs } from "@mui/material";
 
 const Subject = () => {
   const history = useHistory();
@@ -39,6 +39,11 @@ const Subject = () => {
 
   return (
     <>
+      <Box my={2}>
+        <Breadcrumbs>
+          <Typography color="textPrimary">Subject</Typography>
+        </Breadcrumbs>
+      </Box>
       <Typography mb={3} variant="h4">
         Select Class
       </Typography>
