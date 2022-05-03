@@ -61,7 +61,7 @@ export const update = async (id, formData) => {
 
   const data = formData;
   data.isUpdate = true;
-  const result = await API.put(target, data);
+  const result = await API.post(target, data);
   return result;
 };
 

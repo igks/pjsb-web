@@ -55,7 +55,14 @@ const SubjectDetailForm = () => {
   };
 
   const updateExistingRecord = async (formData) => {
-    let response = await update(detail.id, formData);
+    let formsData = new FormData();
+    formsData.append("section", formData.section);
+    formsData.append("title", formData.title);
+    formsData.append("video_url", formData.video_url);
+    formsData.append("content_id", formData.content_id);
+    formsData.append("thumbnail", file);
+    formsData.append("_method", "put");
+    let response = await update(detail.id, formsData);
     if (response.success) {
       dispatch(showAlert("success", "Record updated successfully."));
       history.push("/content-details", {
